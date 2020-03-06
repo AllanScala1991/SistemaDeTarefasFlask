@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><!-- IMPORTA JQUERY -->
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script><!-- IMPORTA JQUERY -->
+    <script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script><!-- IMPORTA PARA NAO TER ERRO NO RETORNO DO JSON -->
+    <script src="../static/js/functions.js"></script>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <title>Sistema de Tarefas</title>
+</head>
+<body onload="Total();">
+    <div id="container">
+
+        <div class="container_lateral">
+            <div class="title1">
+                <h2 style="margin: 0;">MENU</h2>
+            </div><hr>
+            <div class="search_div">
+                <form action="http://127.0.0.1:5000/search" method="post">
+                    <input type="text" class="input_search" name="search" placeholder="Digite um nome para busca!">
+                    <input type="image" src="../static/img/search.png" alt="Submit" align="center" class="button_search">
+                </form>
+            </div>
+            <div class="buttons_lateral">
+                <div class="div_buttons">
+                    <a href="http://127.0.0.1:5000/filtro/ABERTO" class="buttons2">APENAS EM ABERTO</a>
+                </div>
+                <div class="div_buttons">
+                    <a href="http://127.0.0.1:5000/filtro/CONCLUIDO" class="buttons2">APENAS CONCLUIDOS</a>
+                </div>
+                <div class="div_buttons">
+                    <a href="http://127.0.0.1:5000/" class="buttons2">EXIBIR TODOS</a>
+                </div>
+            </div>
+            <div class="abertos">
+                <div class="title_abertos">
+                    <h2>TOTAL EM ABERTO:</h2>
+                </div>
+                <div class="numero_aberto">
+                    <p>{{itens_aberto}}</p>
+                </div>
+
+            </div>
+
+            
+        </div>
+
+        <div class="container_central">
+
+            <div class="container_top">
+                <h1>SISTEMA DE TAREFAS</h1>
+            </div>
+    
+            <div class="container_center">
+                <div class="title2">
+                    <p>LISTA DE TAREFAS</p>
+                </div>
+
+                <div class="button_container">
+                    <p><button onclick=Cadastrar_Abrir(); id="cadastrar" class="buttons">Adicionar Tarefa</button></p>
+                </div>
+                
+                <div class="results">
+                    <table class="tabela_resultados">
+                        <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>DESCRIÇÃO</th>
+                            <th>DATA DE INICIO</th>
+                            <th>DATA DE ENCERRAMENTO</th>
+                            <th>STATUS</th>
+                            <th colspan="2">AÇÕES</th>
+                        </tr>
+                        {% if exibir %}
+                            {% for database in registers %}
+                            <tr>
+                                <td>{{database[0]}}</td>
+                                <td>{{database[1]}}</td>
+                                <td>{{database[2]}}</td>
+                                <td>{{database[3]}}</td>
+                                <td>{{database[4]}}</td>
+                                {%if database[5] == "ABERTO"%}
+                                    <td style="color: white;font-weight: bold;background-color:red;">{{database[5]}}</td>
+                                    <td class="td_acoes"><a href="http://127.0.0.1:5000/condicao/{{database[0]}}">FINALIZAR</a></td>
+                                {%else%}
+                                    <td style="color: white;font-weight: bold;background-color:green;">{{database[5]}}</td>
+                                    <td class="td_acoes"><a href=""></a></td>
+                                {%endif%}
+                                
+                                <td class="td_acoes"><a href="http://127.0.0.1:5000/delete/{{database[0]}}">EXCLUIR</a></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                        
+                    </table>
+                </div>
+            </div>
+            {% if error_search %}
+                <div class="error_search">
+                    <p>Nada foi encontrado !!</p>
+                    <a href="http://127.0.0.1:5000/" class="buttons" style="font-size: 25px;">FECHAR</a>
+                </div>
+            {%endif%}
+        </div>
+
+        <div class="nova_tarefa">
+            <div class="title3">
+                <h2 style="margin: 0;">NOVA TAREFA</h2>
+            </div>
+            <form action="http://127.0.0.1:5000/salvar_cadastro" method="post">
+                <div class="campos">
+                    <label for="nome">NOME:</label>
+                    <input type="text" name="nome" id="nome">
+                    <label>STATUS:</label>
+                    <label style="color: red;">ABERTO</label>
+                </div>
+                <div class="campos" style="margin: 20px 50px;">
+                    <label for="inicio">DT - INICIAL</label>
+                    <input type="date" name="inicio" id="inicio">
+                    <label for="final">DT - FINAL</label>
+                    <input type="date" name="final" id="final">
+                </div>
+                <div class="descricao">
+                    <div class="title4" style="padding-bottom: 10px; text-decoration: underline;">
+                        <label for="descricao">DESCRIÇÃO:</label>
+                    </div>
+                    <div class="text-area">
+                        <textarea name="descricao" id="descricao" cols="60" rows="13"></textarea>
+                    </div>
+                </div>
+                <div class="buttons_cadastro">
+                    <button type="submit" class="buttons">CONFIRMAR</button>
+                    <p><a href="#" onclick="Cadastrar_Fechar();" class="buttons">FECHAR</a></p>
+                </div>
+            </form>
+
+        </div>
+      
+        
+    </div>
+    
+</body>
+</html>
